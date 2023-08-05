@@ -46,9 +46,9 @@ public class Runtime
      * The function used to fetch a runtime variable. This gets a variable from
      * a specific key and casts it to a type automatically.
      * 
-     * @param <T>
+     * @param <T> The class type of the returned variable
      * @param key The key to fetch
-     * @param type
+     * @param type The class type of the returned variable
      * 
      * @return The variable associated with the key, cast as type
      */
