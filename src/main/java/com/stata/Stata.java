@@ -4,7 +4,7 @@ package com.stata;
  * Hello world!
  *
  */
-public class App 
+public class Stata 
 {
     public static void main( String[] args )
     {
