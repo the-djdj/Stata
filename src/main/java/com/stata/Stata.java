@@ -1,5 +1,6 @@
 package com.stata;
 
+import com.stata.project.Project;
 import com.stata.runtime.Runtime;
 
 import java.util.Arrays;
@@ -17,6 +18,9 @@ public class Stata
 
     /** The runtime of the Stata instance. */
     public Runtime runtime;
+
+    /** The open Stata project. */
+    public Project project;
 
     /**
      * The main method. This is the entrypoint to Stata.
@@ -75,5 +79,14 @@ public class Stata
     {
         // Store the runtime
         this.runtime = runtime;
+
+        // Create the empty project
+        this.project = new Project();
+
+        // If there is an input argument, load the project
+        if (this.runtime.getRuntimeValue("input", String.class) != null)
+        {
+            this.project.load(this.runtime.getRuntimeValue("input", String.class));
+        }
     }
 }
