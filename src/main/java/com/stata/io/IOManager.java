@@ -8,7 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+
+import org.json.JSONObject;
 
 import static java.util.Map.entry;
 
@@ -62,5 +65,51 @@ public class IOManager
 
         // Finally, close the output stream
         output.close();
+    }
+
+    /**
+     * The load function. This loads a project from the disk so that it can be
+     * used within Stata.
+     * 
+     * @param filename The file to load
+     * 
+     * @return The new project to be imported
+     * 
+     * @throws IOException
+     */
+    public static Project load(String filename) throws IOException
+    {
+        // Get the input file
+        ZipFile file = new ZipFile(filename);
+
+        // Create the project to populate
+        Project project = new Project();
+
+        // Iterate through each item in the zip file
+        file.entries().asIterator().forEachRemaining(entry -> {
+            try 
+            {
+                // Read the file
+                String contents = new String(file.getInputStream(entry).readAllBytes());
+
+                // Check which file we're dealing with
+                switch (entry.getName())
+                {
+                    case "metadata":
+                        project.getMetadata().fromJSONString(new JSONObject(contents));
+                        break;
+                }
+            }
+            catch (IOException exception)
+            {
+                exception.printStackTrace();
+            }
+        });
+
+        // Close the file
+        file.close();
+
+        // And return the new project object
+        return project;
     }
 }

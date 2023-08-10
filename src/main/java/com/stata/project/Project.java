@@ -64,6 +64,17 @@ public class Project {
      */
     public void load(String file)
     {
+        try
+        {
+            // Load a project from a file
+            Project project = IOManager.load(file);
 
+            // And store the project artefacts
+            this.metadata = project.getMetadata();
+        }
+        catch (IOException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 }
