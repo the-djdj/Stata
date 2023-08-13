@@ -2,6 +2,7 @@ package com.stata;
 
 import com.stata.project.Project;
 import com.stata.runtime.Runtime;
+import com.stata.ui.UI;
 
 import java.util.Arrays;
 import java.util.ListIterator;
@@ -11,16 +12,22 @@ import java.util.ListIterator;
  * 
  * @author Dan Jenkins
  */
-public class Stata 
+public enum Stata
 {
     /** The current Stata instance. */
-    public static Stata instance;
+    INSTANCE();
+
+    /** The arguments used to start the Stata instance. */
+    private String[] arguments;
 
     /** The runtime of the Stata instance. */
-    public Runtime runtime;
+    private Runtime runtime;
+
+    /** The application user interface. */
+    private UI ui;
 
     /** The open Stata project. */
-    public Project project;
+    private Project project;
 
     /**
      * The main method. This is the entrypoint to Stata.
@@ -29,14 +36,35 @@ public class Stata
      */
     public static void main(String[] args)
     {
-        // Set the default runtime
-        Runtime runtime = new Runtime();
+        // Create the Stata instance
+        Stata.getInstance().handleArguments(args);
+        Stata.getInstance().start();
+    }
 
-        // Handle the application arguments
-        Stata.handleArguments(args, runtime);
+    /**
+     * The function used to get a Stata instance. This returns the enum
+     * instance in a thread-safe manner.
+     * 
+     * @return The active Stata instance
+     */
+    public static Stata getInstance()
+    {
+        return INSTANCE;
+    }
 
-        // And create the Stata instance
-        Stata.instance = new Stata(runtime);
+    /**
+     * The Stata object. This houses the main Stata instance and collects all
+     * of the variables.
+     * 
+     * @param arguments The arguments passed to the application
+     */
+    private Stata()
+    {
+        // Create the runtime
+        this.runtime = new Runtime();
+
+        // Create the empty project
+        this.project = new Project();
     }
 
     /**
@@ -44,10 +72,12 @@ public class Stata
      * the arguments and sets the runtime appropriately.
      * 
      * @param arguments The arguments to scan
-     * @param runtime The runtime to pass to the application
      */
-    public static void handleArguments(String[] arguments, Runtime runtime)
+    public void handleArguments(String[] arguments)
     {
+        // Store the arguments
+        this.arguments = arguments;
+
         // Iterate through each argument and process it
         for (ListIterator<String> iterator = Arrays.asList(arguments).listIterator(); iterator.hasNext();)
         {
@@ -55,38 +85,47 @@ public class Stata
             switch (iterator.next().toLowerCase())
             {
                 case "gui":
-                    runtime.setRuntimeValue("gui", true);
+                    this.runtime.setRuntimeValue("gui", true);
                     break;
 
                 case "input":
-                    runtime.setRuntimeValue("input", iterator.next());
+                    this.runtime.setRuntimeValue("input", iterator.next());
                     break;
 
                 case "nogui":
-                    runtime.setRuntimeValue("gui", false);
+                    this.runtime.setRuntimeValue("gui", false);
                     break;
             }
         }
     }
 
     /**
-     * The Stata object. This houses the main Stata instance and collects all
-     * of the variables.
-     * 
-     * @param runtime The runtime of the Stata instance
+     * The function used to start the Stata application. This processes the
+     * input arguments and sets everything up.
      */
-    public Stata(Runtime runtime)
+    private void start()
     {
-        // Store the runtime
-        this.runtime = runtime;
-
-        // Create the empty project
-        this.project = new Project();
+        // Launch JavaFX
+        UI.launch(UI.class, this.arguments);
 
         // If there is an input argument, load the project
         if (this.runtime.getRuntimeValue("input", String.class) != null)
         {
             this.project.load(this.runtime.getRuntimeValue("input", String.class));
         }
+
+        // Create the usr interface system
+        this.ui = new UI();
+    }
+
+    /**
+     * The function used to return the runtime. This allows the runtime to be
+     * accessed elsewhere in the application.
+     * 
+     * @return The current runtime
+     */
+    public Runtime getRuntime()
+    {
+        return this.runtime;
     }
 }

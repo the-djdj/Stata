@@ -14,6 +14,7 @@ public final class Constants
     /** The list of the constants for this application. */
     public static Map<String, Object> constants = Map.ofEntries
     (
-        entry("gui", true)
+        entry("gui", true),
+        entry("title", new String("Stata"))
     );
 }
