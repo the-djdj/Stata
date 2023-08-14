@@ -15,7 +15,7 @@ updates:
       prefix: "[maven] "
       include: "scope"
       
-  - package-ecosystem:
+  - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
