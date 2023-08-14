@@ -119,6 +119,16 @@ public enum Stata
     }
 
     /**
+     * The exit function. This is called whenever the application closes to
+     * ensure that it exits gracefully.
+     */
+    public void exit()
+    {
+        // And close the application
+        System.exit(0);
+    }
+
+    /**
      * The function used to return the runtime. This allows the runtime to be
      * accessed elsewhere in the application.
      * 
