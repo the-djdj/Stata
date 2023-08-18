@@ -3,6 +3,7 @@ package com.stata.io;
 import com.stata.project.Project;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,15 +32,15 @@ public class IOManager
      * The save function. This saves a project state to the disk so that it can
      * be exported or loaded again elsewhere.
      * 
-     * @param filename The filename to save the rpoject as
+     * @param file The file to save the project as
      * @param project The project state to save
      * 
      * @throws IOException
      */
-    public static void save(String filename, Project project) throws IOException
+    public static void save(File file, Project project) throws IOException
     {
         // Create the path to write the file to
-        Path path = Path.of(filename);
+        Path path = file.toPath();
 
         // Create an output stream for writing a file
         ZipOutputStream output = new ZipOutputStream(new BufferedOutputStream(Files.newOutputStream(path)));
@@ -71,26 +72,26 @@ public class IOManager
      * The load function. This loads a project from the disk so that it can be
      * used within Stata.
      * 
-     * @param filename The file to load
+     * @param file The file to load
      * 
      * @return The new project to be imported
      * 
      * @throws IOException
      */
-    public static Project load(String filename) throws IOException
+    public static Project load(File file) throws IOException
     {
         // Get the input file
-        ZipFile file = new ZipFile(filename);
+        ZipFile zip = new ZipFile(file);
 
         // Create the project to populate
         Project project = new Project();
 
         // Iterate through each item in the zip file
-        file.entries().asIterator().forEachRemaining(entry -> {
+        zip.entries().asIterator().forEachRemaining(entry -> {
             try 
             {
                 // Read the file
-                String contents = new String(file.getInputStream(entry).readAllBytes());
+                String contents = new String(zip.getInputStream(entry).readAllBytes());
 
                 // Check which file we're dealing with
                 switch (entry.getName())
@@ -107,7 +108,7 @@ public class IOManager
         });
 
         // Close the file
-        file.close();
+        zip.close();
 
         // And return the new project object
         return project;

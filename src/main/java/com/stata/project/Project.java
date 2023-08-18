@@ -1,8 +1,9 @@
 package com.stata.project;
 
-import java.io.IOException;
-
 import com.stata.io.IOManager;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * The main project class. This represents an open project in Stata, and stores
@@ -42,7 +43,7 @@ public class Project {
      * 
      * @param file The file to save the project as
      */
-    public void save(String file)
+    public void save(File file)
     {
         // Write the project to a file
         try
@@ -62,7 +63,7 @@ public class Project {
      * 
      * @param file The file to read the project from
      */
-    public void load(String file)
+    public void load(File file)
     {
         try
         {

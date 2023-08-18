@@ -4,6 +4,7 @@ import com.stata.project.Project;
 import com.stata.runtime.Runtime;
 import com.stata.ui.UI;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.ListIterator;
 
@@ -111,7 +112,7 @@ public enum Stata
         // If there is an input argument, load the project
         if (this.runtime.getRuntimeValue("input", String.class) != null)
         {
-            this.project.load(this.runtime.getRuntimeValue("input", String.class));
+            this.project.load(new File(this.runtime.getRuntimeValue("input", String.class)));
         }
 
         // Create the usr interface system
@@ -126,6 +127,17 @@ public enum Stata
     {
         // And close the application
         System.exit(0);
+    }
+
+    /**
+     * The function used to return the active project. This allows the project
+     * to be accessed elsewhere in the application.
+     * 
+     * @return The active project
+     */
+    public Project getProject()
+    {
+        return this.project;
     }
 
     /**

@@ -4,7 +4,6 @@ import com.stata.Stata;
 import com.stata.ui.scenes.MainScene;
 
 import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -23,7 +22,7 @@ public class UI extends Application
     private final BorderPane root;
 
     /** The current scene in the application. */
-    private Scene scene;
+    private MainScene scene;
 
     /**
      * The default constructor. This creates a new UI system in which to run
@@ -54,6 +53,9 @@ public class UI extends Application
 
         // Set the default scene
         primary.setScene(this.scene);
+
+        // Update the scene's stage
+        this.scene.setStage(primary);
 
         // And show the interface
         primary.show();

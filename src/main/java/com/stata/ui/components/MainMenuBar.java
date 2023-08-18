@@ -2,6 +2,8 @@ package com.stata.ui.components;
 
 import com.stata.Stata;
 
+import java.io.File;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
@@ -9,6 +11,9 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyCombination;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 
 /**
  * The main menu bar of the Stata application. This stores the menu items that
@@ -18,6 +23,9 @@ import javafx.scene.input.KeyCombination;
  */
 public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
 {
+    /** The active stage. */
+    private Stage stage;
+
     /** The file menu */
     private Menu fileMenu;
 
@@ -33,6 +41,18 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
     /** The exit menu item. */
     private MenuItem exitMenuItem;
 
+    /** The file chooser for opening and saving files. */
+    private FileChooser chooser;
+
+    /** The default location to use in the file choosers. */
+    private File directory;
+
+    /** The file that is chosen by the file chooser. */
+    private File file;
+
+    /** The extension filter for choosing Stata files. */
+    private ExtensionFilter filter;
+
     /**
      * The default constructor. This creates a new menu bar with the relevant
      * options for the user
@@ -41,6 +61,14 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
     {
         // Create the menus
         this.createFileMenuItems();
+
+        // Create the file chooser environment
+        this.directory = new File(System.getProperty("user.home"));
+        this.filter = new ExtensionFilter("Stata project", "*.stata");
+
+        // Create the file chooser
+        this.chooser = new FileChooser();
+        this.chooser.getExtensionFilters().add(this.filter);
     }
 
     /**
@@ -99,16 +127,49 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
         }
         else if (event.getSource() == this.openMenuItem)
         {
+            // Configure the file chooser
+            this.chooser.setTitle("Open project");
+            this.chooser.setInitialDirectory(this.directory); 
 
+            // Display the file chooser
+            this.file = this.chooser.showOpenDialog(this.stage);
+
+            // And handle the input
+            if (this.file != null)
+            {
+                Stata.getInstance().getProject().load(this.file);
+            }
         }
         else if (event.getSource() == this.saveMenuItem)
         {
+            // Configure the file chooser
+            this.chooser.setTitle("Save project");
+            this.chooser.setInitialDirectory(this.directory); 
 
+            // And display the file chooser
+            this.file = this.chooser.showSaveDialog(this.stage);
+
+            // And handle the input
+            if (this.file != null)
+            {
+                Stata.getInstance().getProject().save(this.file);
+            }
         }
         else if (event.getSource() == this.exitMenuItem)
         {
             // Close the application
             Stata.getInstance().exit();
         }
+    }
+
+    /**
+     * The function used to set the stage that is active. This is used to
+     * provide subcomponents a place to display.
+     * 
+     * @param stage The active stage
+     */
+    public void setStage(Stage stage)
+    {
+        this.stage = stage;
     }
 }
