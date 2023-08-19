@@ -1,6 +1,8 @@
 package com.stata.ui.components;
 
 import com.stata.Stata;
+import com.stata.project.Project;
+import com.stata.ui.UI;
 
 import java.io.File;
 
@@ -23,6 +25,12 @@ import javafx.stage.Stage;
  */
 public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
 {
+    /** The Stata UI. */
+    private UI ui;
+
+    /** The project that this menu bar represents. */
+    private Project project;
+
     /** The active stage. */
     private Stage stage;
 
@@ -137,7 +145,11 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
             // And handle the input
             if (this.file != null)
             {
-                Stata.getInstance().getProject().load(this.file);
+                // Load the file
+                this.project.load(this.file);
+
+                // And update the interface
+                this.ui.update();
             }
         }
         else if (event.getSource() == this.saveMenuItem)
@@ -152,7 +164,11 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
             // And handle the input
             if (this.file != null)
             {
-                Stata.getInstance().getProject().save(this.file);
+                // Save the file
+                this.project.save(this.file);
+
+                // And update the interface
+                this.ui.update();
             }
         }
         else if (event.getSource() == this.exitMenuItem)
@@ -171,5 +187,19 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
     public void setStage(Stage stage)
     {
         this.stage = stage;
+    }
+
+    /**
+     * The update function. This takes a specified project and ensures that the
+     * tree reflects the active project state.
+     * 
+     * @param ui The application UI
+     * @param project The project to display
+     */
+    public void update(UI ui, Project project)
+    {
+        // Store the updated variables
+        this.ui = ui;
+        this.project = project;
     }
 }
