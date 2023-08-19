@@ -150,4 +150,15 @@ public enum Stata
     {
         return this.runtime;
     }
+
+    /**
+     * The function used to return the UI system. This allows other classes to
+     * call UI updates.
+     * 
+     * @return The UI manager
+     */
+    public UI getUI()
+    {
+        return this.ui;
+    }
 }
