@@ -1,6 +1,9 @@
 package com.stata.ui.scenes;
 
+import com.stata.project.Project;
+import com.stata.ui.UI;
 import com.stata.ui.components.MainMenuBar;
+import com.stata.ui.components.ProjectTree;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -20,6 +23,9 @@ public class MainScene extends Scene
     /** The menubar displayed at the top of the screen. */
     private MainMenuBar menu;
 
+    /** The project tree for proejct information */
+    private ProjectTree tree;
+
     /**
      * The default constructor. This creates the scene with a specific parent
      * as well as a width and height, and adds all of the requisite components.
@@ -33,11 +39,13 @@ public class MainScene extends Scene
         // Create the scene
         super(parent, width, height);
 
-        // Create the menu
+        // Create the components
         this.menu = new MainMenuBar();
+        this.tree = new ProjectTree();
 
-        // Add the menu bar
+        // Add the components
         parent.setTop(this.menu);
+        parent.setLeft(this.tree);
     }    
 
     /**
@@ -53,5 +61,19 @@ public class MainScene extends Scene
 
         // And update child components
         this.menu.setStage(this.stage);
+    }
+
+    /**
+     * The update function. This takes a specified project and ensures that the
+     * tree reflects the active project state.
+     * 
+     * @param ui The application UI
+     * @param project The project to display
+     */
+    public void update(UI ui, Project project)
+    {
+        // Update the components
+        this.menu.update(ui, project);
+        this.tree.update(ui, project);
     }
 }
