@@ -16,6 +16,9 @@ public class Project {
     /** The metadata of the project storing project information. */
     private Metadata metadata;
 
+    /** A variable storing whether or not the project has been modified. */
+    private boolean modified;
+
     /**
      * The default constructor. This creates the project prototype and creates
      * the relevant data variables.
@@ -23,7 +26,10 @@ public class Project {
     public Project()
     {
         // Create the metadata for the project
-        this.metadata = new Metadata();
+        this.metadata = new Metadata(this);
+
+        // Note that the project hasn't been modified
+        this.modified = false;
     }
 
     /**
@@ -34,6 +40,25 @@ public class Project {
     public Metadata getMetadata()
     {
         return this.metadata;
+    }
+
+    /**
+     * A simple function to mark the project as modified.
+     */
+    public void modify()
+    {
+        this.modified = true;
+    }
+
+    /**
+     * A simple function to return whether or not the project has been
+     * modified.
+     * 
+     * @return Whether the project has been modified
+     */
+    public boolean isModified()
+    {
+        return this.modified;
     }
 
     /**
@@ -48,7 +73,11 @@ public class Project {
         // Write the project to a file
         try
         {
+            // Save the file
             IOManager.save(file, this);
+
+            // And note that the file has not been modified
+            this.modified = false;
         }
         catch (IOException exception)
         {
