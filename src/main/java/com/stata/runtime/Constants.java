@@ -15,6 +15,8 @@ public final class Constants
     public static Map<String, Object> constants = Map.ofEntries
     (
         entry("gui", true),
-        entry("title", new String("Stata"))
+        entry("window_height", 800),
+        entry("window_title", new String("Stata")),
+        entry("window_width", 1024)
     );
 }
