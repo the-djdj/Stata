@@ -2,6 +2,7 @@ package com.stata.ui.scenes;
 
 import com.stata.project.Project;
 import com.stata.ui.UI;
+import com.stata.ui.components.ContentPane;
 import com.stata.ui.components.MainMenuBar;
 import com.stata.ui.components.ProjectTree;
 
@@ -23,8 +24,11 @@ public class MainScene extends Scene
     /** The menubar displayed at the top of the screen. */
     private MainMenuBar menu;
 
-    /** The project tree for proejct information */
+    /** The project tree for proejct information. */
     private ProjectTree tree;
+
+    /** The tabbed content pane. */
+    private ContentPane content;
 
     /**
      * The default constructor. This creates the scene with a specific parent
@@ -42,10 +46,12 @@ public class MainScene extends Scene
         // Create the components
         this.menu = new MainMenuBar();
         this.tree = new ProjectTree();
+        this.content = new ContentPane();
 
         // Add the components
         parent.setTop(this.menu);
         parent.setLeft(this.tree);
+        parent.setCenter(this.content);
     }    
 
     /**
@@ -65,7 +71,7 @@ public class MainScene extends Scene
 
     /**
      * The update function. This takes a specified project and ensures that the
-     * tree reflects the active project state.
+     * application reflects the active project state.
      * 
      * @param ui The application UI
      * @param project The project to display
@@ -75,5 +81,6 @@ public class MainScene extends Scene
         // Update the components
         this.menu.update(ui, project);
         this.tree.update(ui, project);
+        this.content.update(ui, project);
     }
 }
