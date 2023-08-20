@@ -12,6 +12,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -95,7 +96,7 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
         // Create the file menu items
         this.newMenuItem  = new MenuItem("New");
         this.openMenuItem = new MenuItem("Open");
-        this.saveMenuItem = new MenuItem("Save");
+        this.saveMenuItem = new MenuItem("Save", new ImageView("resources/save.png"));
         this.saveAsMenuItem = new MenuItem("Save as...");
         this.exitMenuItem = new MenuItem("Exit");
 
