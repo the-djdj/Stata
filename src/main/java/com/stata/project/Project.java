@@ -1,5 +1,6 @@
 package com.stata.project;
 
+import com.stata.Stata;
 import com.stata.io.IOManager;
 
 import java.io.File;
@@ -99,8 +100,11 @@ public class Project {
             // Load a project from a file
             Project project = IOManager.load(file);
 
-            // And store the project artefacts
+            // Store the project artefacts
             this.metadata = project.getMetadata();
+
+            // And set the file as an environment variable
+            Stata.getInstance().getRuntime().setRuntimeValue("project_file", file);
         }
         catch (IOException exception)
         {

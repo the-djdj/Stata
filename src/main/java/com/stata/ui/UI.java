@@ -42,7 +42,11 @@ public class UI extends Application
         this.root = new BorderPane();
 
         // Create the default scene
-        this.scene = new MainScene(root, 300, 250);
+        this.scene = new MainScene(
+            root,
+            this.stata.getRuntime().getRuntimeValue("window_width", Integer.class), 
+            this.stata.getRuntime().getRuntimeValue("window_height", Integer.class)
+        );
     }
 
     /**
@@ -98,7 +102,7 @@ public class UI extends Application
     public String createTitle(Project project)
     {
         // Create the title string
-        String title = this.stata.getRuntime().getRuntimeValue("title", String.class);
+        String title = this.stata.getRuntime().getRuntimeValue("window_title", String.class);
 
         // Add the project information
         if (project != null)

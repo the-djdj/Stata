@@ -12,6 +12,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -45,6 +46,9 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
 
     /** The save file menu item */
     private MenuItem saveMenuItem;
+
+    /** The save as file menu item */
+    private MenuItem saveAsMenuItem;
 
     /** The exit menu item. */
     private MenuItem exitMenuItem;
@@ -92,7 +96,8 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
         // Create the file menu items
         this.newMenuItem  = new MenuItem("New");
         this.openMenuItem = new MenuItem("Open");
-        this.saveMenuItem = new MenuItem("Save");
+        this.saveMenuItem = new MenuItem("Save", new ImageView("resources/save.png"));
+        this.saveAsMenuItem = new MenuItem("Save as...");
         this.exitMenuItem = new MenuItem("Exit");
 
         // Create the keyboard shortcuts
@@ -104,6 +109,7 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
         this.newMenuItem.setOnAction(this);
         this.openMenuItem.setOnAction(this);
         this.saveMenuItem.setOnAction(this);
+        this.saveAsMenuItem.setOnAction(this);
         this.exitMenuItem.setOnAction(this);
 
         // Add all the file menu items
@@ -112,6 +118,7 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
             this.newMenuItem,
             this.openMenuItem,
             this.saveMenuItem,
+            this.saveAsMenuItem,
             new SeparatorMenuItem(),
             this.exitMenuItem
         );
@@ -153,6 +160,26 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
             }
         }
         else if (event.getSource() == this.saveMenuItem)
+        {
+            // Get the runtime file
+            this.file = Stata.getInstance().getRuntime().getRuntimeValue("Project_file", File.class);
+
+            // Check if the file is valid
+            if (this.file != null)
+            {
+                // Save the file
+                this.project.save(this.file);
+
+                // And update the interface
+                this.ui.update();
+            }
+            else 
+            {
+                // Otherwise, trigger the save as menu
+                this.saveAsMenuItem.fire();
+            }
+        }
+        else if (event.getSource() == this.saveAsMenuItem)
         {
             // Configure the file chooser
             this.chooser.setTitle("Save project");
@@ -201,5 +228,8 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
         // Store the updated variables
         this.ui = ui;
         this.project = project;
+
+        // Enable/disable menu items accordingly
+        this.saveMenuItem.setDisable(this.file == null);
     }
 }
