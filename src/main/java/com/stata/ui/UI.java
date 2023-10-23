@@ -2,6 +2,8 @@ package com.stata.ui;
 
 import com.stata.Stata;
 import com.stata.project.Project;
+import com.stata.ui.components.ContentPane;
+import com.stata.ui.components.ContentTab;
 import com.stata.ui.scenes.MainScene;
 
 import javafx.application.Application;
@@ -119,5 +121,25 @@ public class UI extends Application
 
         // And return the string
         return title;
+    }
+
+    /**
+     * A simple function used to open a tab in the main interface.
+     * 
+     * @param tab The tab to open
+     */
+    public void addTab(ContentTab tab)
+    {
+        this.scene.addTab(tab);
+    }
+
+    /**
+     * The content pane for adding content to the window.
+     * 
+     * @return The content pane
+     */
+    public ContentPane getContentPane()
+    {
+        return this.scene.getContentPane();
     }
 }
