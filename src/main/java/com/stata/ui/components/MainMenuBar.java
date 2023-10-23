@@ -4,6 +4,7 @@ import com.stata.Stata;
 import com.stata.project.Project;
 import com.stata.ui.UI;
 
+import java.io.IOException;
 import java.io.File;
 
 import javafx.event.ActionEvent;
@@ -38,6 +39,9 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
     /** The file menu */
     private Menu fileMenu;
 
+    /** The data menu */
+    private Menu dataMenu;
+
     /** The new file menu item */
     private MenuItem newMenuItem;
 
@@ -53,6 +57,9 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
     /** The exit menu item. */
     private MenuItem exitMenuItem;
 
+    /** The import menu item. */
+    private MenuItem importMenuItem;
+
     /** The file chooser for opening and saving files. */
     private FileChooser chooser;
 
@@ -62,9 +69,6 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
     /** The file that is chosen by the file chooser. */
     private File file;
 
-    /** The extension filter for choosing Stata files. */
-    private ExtensionFilter filter;
-
     /**
      * The default constructor. This creates a new menu bar with the relevant
      * options for the user
@@ -73,18 +77,17 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
     {
         // Create the menus
         this.createFileMenuItems();
+        this.createDataMenuItems();
 
         // Create the file chooser environment
         this.directory = new File(System.getProperty("user.home"));
-        this.filter = new ExtensionFilter("Stata project", "*.stata");
 
         // Create the file chooser
         this.chooser = new FileChooser();
-        this.chooser.getExtensionFilters().add(this.filter);
     }
 
     /**
-     * The function used to create the file menu items. This craetes the items,
+     * The function used to create the file menu items. This creates the items,
      * adds the keyboard shortcuts, sets the action event handlers, and adds
      * them to the file menu.
      */
@@ -128,6 +131,35 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
     }
 
     /**
+     * The function used to create the data menu items. This creates the items,
+     * adds the keyboard shortcuts, sets the action event handlers, and adds
+     * them to the data menu.
+     */
+    private void createDataMenuItems()
+    {
+        // Create the file menu
+        this.dataMenu = new Menu("Data");
+
+        // Create the data menu items
+        this.importMenuItem = new MenuItem("Import", new ImageView("resources/import.png"));
+
+        // Create the keyboard shortcuts
+        this.importMenuItem.setAccelerator(KeyCombination.keyCombination("CTRL+I"));
+
+        // Create the action event listeners
+        this.importMenuItem.setOnAction(this);
+
+        // Add all the file menu items
+        this.dataMenu.getItems().addAll
+        (
+            this.importMenuItem
+        );
+
+        // And add the file menu
+        this.getMenus().add(this.dataMenu);
+    }
+
+    /**
      * The function which handles button input whenever a menu item is clicked.
      * 
      * @param event The item click event
@@ -144,7 +176,13 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
         {
             // Configure the file chooser
             this.chooser.setTitle("Open project");
-            this.chooser.setInitialDirectory(this.directory); 
+            this.chooser.setInitialDirectory(this.directory);
+            
+            // Set the file chooser filter
+            this.chooser.getExtensionFilters().clear();
+            this.chooser.getExtensionFilters().add(
+                new ExtensionFilter("Stata project", "*.stata")
+            );
 
             // Display the file chooser
             this.file = this.chooser.showOpenDialog(this.stage);
@@ -162,7 +200,7 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
         else if (event.getSource() == this.saveMenuItem)
         {
             // Get the runtime file
-            this.file = Stata.getInstance().getRuntime().getRuntimeValue("Project_file", File.class);
+            this.file = Stata.getInstance().getRuntime().getRuntimeValue("project_file", File.class);
 
             // Check if the file is valid
             if (this.file != null)
@@ -183,7 +221,14 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
         {
             // Configure the file chooser
             this.chooser.setTitle("Save project");
+            this.chooser.setInitialFileName(this.project.getMetadata().getName());
             this.chooser.setInitialDirectory(this.directory); 
+
+            // Set the file chooser filter
+            this.chooser.getExtensionFilters().clear();
+            this.chooser.getExtensionFilters().add(
+                new ExtensionFilter("Stata project", "*.stata")
+            );
 
             // And display the file chooser
             this.file = this.chooser.showSaveDialog(this.stage);
@@ -202,6 +247,38 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
         {
             // Close the application
             Stata.getInstance().exit();
+        }
+        else if (event.getSource() == this.importMenuItem)
+        {
+            // Configure the file chooser
+            this.chooser.setTitle("Import data");
+            this.chooser.setInitialDirectory(this.directory); 
+
+            // Set the file chooser filter
+            this.chooser.getExtensionFilters().clear();
+            this.chooser.getExtensionFilters().add(
+                new ExtensionFilter("CSV file", "*.csv")
+            );
+
+            // Display the file chooser
+            this.file = this.chooser.showOpenDialog(this.stage);
+
+            // And handle the input
+            if (this.file != null)
+            {
+                try{
+                    // Import the data
+                    this.project.importTable(file);
+
+                    // And update the interface
+                    this.ui.update();
+                }
+                catch (IOException ex)
+                {
+                    // Print the error
+                    ex.printStackTrace();
+                }
+            }
         }
     }
 
@@ -230,6 +307,6 @@ public class MainMenuBar extends MenuBar implements EventHandler<ActionEvent>
         this.project = project;
 
         // Enable/disable menu items accordingly
-        this.saveMenuItem.setDisable(this.file == null);
+        this.saveMenuItem.setDisable(Stata.getInstance().getRuntime().getRuntimeValue("project_file", File.class) == null);
     }
 }

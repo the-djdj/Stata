@@ -4,7 +4,10 @@ import com.stata.Stata;
 import com.stata.io.IOManager;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The main project class. This represents an open project in Stata, and stores
@@ -12,10 +15,13 @@ import java.io.IOException;
  * 
  * @author Dan Jenkins
  */
-public class Project {
-
+public class Project
+{
     /** The metadata of the project storing project information. */
     private Metadata metadata;
+
+    /** A list of the datatables in the current project. */
+    private List<Datatable> datatables;
 
     /** A variable storing whether or not the project has been modified. */
     private boolean modified;
@@ -28,6 +34,9 @@ public class Project {
     {
         // Create the metadata for the project
         this.metadata = new Metadata(this);
+
+        // Create the list of datatables
+        this.datatables = new ArrayList<>();
 
         // Note that the project hasn't been modified
         this.modified = false;
@@ -60,6 +69,17 @@ public class Project {
     public boolean isModified()
     {
         return this.modified;
+    }
+
+    /**
+     * A simple function used to return all of the data tables associated with
+     * this project.
+     * 
+     * @return The list of datatables
+     */
+    public List<Datatable> getDatatables()
+    {
+        return this.datatables;
     }
 
     /**
@@ -102,6 +122,7 @@ public class Project {
 
             // Store the project artefacts
             this.metadata = project.getMetadata();
+            this.datatables = project.getDatatables();
 
             // And set the file as an environment variable
             Stata.getInstance().getRuntime().setRuntimeValue("project_file", file);
@@ -110,5 +131,63 @@ public class Project {
         {
             exception.printStackTrace();
         }
+    }
+
+    /**
+     * The function used to import data from a file. This takes a filename and
+     * imports the data into the current project.
+     * 
+     * @param file The file from which to import data.
+     */
+    public void importTable(File file) throws FileNotFoundException, IOException
+    {
+        // Create the new data table
+        Datatable table = new Datatable();
+
+        // Import the data
+        table.importTable(file);
+
+        // Add the data table to the current project
+        if (!this.datatables.contains(table)) this.datatables.add(table);
+
+        // And note that the project has been modified
+        this.modify();
+    }
+
+    /**
+     * A function used to load contents and headers from a project file into a
+     * datatable. This first checks whether a table with the uuid exists and
+     * creates one if necessary, then loads the headers.
+     * 
+     * @param uuid The uuid of the table
+     * @param headers The headers of the table
+     * @param data The data of the table
+     */
+    public void loadTable(String uuid, String headers, String data) throws IOException
+    {
+        // Check if the datatables list has a table with the uuid
+        for (Datatable table : this.datatables)
+        {
+            // If we have a match, import the headers
+            if (table.getUUID().toString().equals(uuid))
+            {
+                if (!headers.isEmpty()) table.importHeaders(headers, Datatable.INPUT_JSON);
+                if (!data.isEmpty())    table.importData(data);
+                return;
+            }
+        }
+
+        // If there is no match, create the table
+        Datatable table = new Datatable();
+
+        // Set the properties
+        table.setUUID(uuid);
+
+        // Load the headers and contents
+        if (!headers.isEmpty())  table.importHeaders(headers, Datatable.INPUT_JSON);
+        if (!data.isEmpty())     table.importData(data);
+
+        // And add the table
+        if (!this.datatables.contains(table)) this.datatables.add(table);
     }
 }
