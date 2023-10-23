@@ -220,8 +220,6 @@ public class Datatable
                 // Get the field
                 JSONObject field = fields.getJSONObject(i);
 
-                System.out.println(field.getString("name"));
-
                 // And extract the field properties
                 this.headers.add(field.getString("name"));
                 this.types.add(Datatype.fromString(field.getString("type")));
