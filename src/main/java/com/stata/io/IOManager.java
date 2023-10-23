@@ -49,7 +49,7 @@ public class IOManager
         contents.put("metadata", project.getMetadata().getJSONString().toString());
 
         // Add the datatables
-        for (Datatable table : project.getDatatables())
+        for (Datatable table : project.getDatatables().values())
         {
             contents.put("datatables" + File.separator
                 + table.getUUID().toString() + File.separator + "data", table.exportData());
