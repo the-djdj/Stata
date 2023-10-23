@@ -3,6 +3,7 @@ package com.stata.ui.scenes;
 import com.stata.project.Project;
 import com.stata.ui.UI;
 import com.stata.ui.components.ContentPane;
+import com.stata.ui.components.ContentTab;
 import com.stata.ui.components.MainMenuBar;
 import com.stata.ui.components.ProjectTree;
 
@@ -82,5 +83,25 @@ public class MainScene extends Scene
         this.menu.update(ui, project);
         this.tree.update(ui, project);
         this.content.update(ui, project);
+    }
+
+    /**
+     * A simple function used to open a tab in the main interface.
+     * 
+     * @param tab The tab to open
+     */
+    public void addTab(ContentTab tab)
+    {
+        this.content.addTab(tab);
+    }
+
+    /**
+     * The content pane for adding content to the window.
+     * 
+     * @return The content pane
+     */
+    public ContentPane getContentPane()
+    {
+        return this.content;
     }
 }

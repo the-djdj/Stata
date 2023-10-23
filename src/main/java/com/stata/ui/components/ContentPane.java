@@ -2,7 +2,6 @@ package com.stata.ui.components;
 
 import com.stata.project.Project;
 import com.stata.ui.UI;
-import com.stata.ui.components.tabs.DataTab;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +16,7 @@ import javafx.scene.control.TabPane;
  */
 public class ContentPane extends TabPane
 {
+    /** A list of tabs currently in the content pane. */
     private final List<ContentTab> tabs;
 
     /**
@@ -27,8 +27,6 @@ public class ContentPane extends TabPane
     {
         // Create the tab list
         this.tabs = new ArrayList<>();
-
-        this.addTab(new DataTab(this));
     }
 
     /**

@@ -6,8 +6,7 @@ import com.stata.io.IOManager;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * The main project class. This represents an open project in Stata, and stores
@@ -21,7 +20,7 @@ public class Project
     private Metadata metadata;
 
     /** A list of the datatables in the current project. */
-    private List<Datatable> datatables;
+    private HashMap<String, Datatable> datatables;
 
     /** A variable storing whether or not the project has been modified. */
     private boolean modified;
@@ -36,7 +35,7 @@ public class Project
         this.metadata = new Metadata(this);
 
         // Create the list of datatables
-        this.datatables = new ArrayList<>();
+        this.datatables = new HashMap<>();
 
         // Note that the project hasn't been modified
         this.modified = false;
@@ -77,7 +76,7 @@ public class Project
      * 
      * @return The list of datatables
      */
-    public List<Datatable> getDatatables()
+    public HashMap<String, Datatable> getDatatables()
     {
         return this.datatables;
     }
@@ -148,7 +147,7 @@ public class Project
         table.importTable(file);
 
         // Add the data table to the current project
-        if (!this.datatables.contains(table)) this.datatables.add(table);
+        if (!this.datatables.containsKey(table.getName())) this.datatables.put(table.getName(), table);
 
         // And note that the project has been modified
         this.modify();
@@ -166,7 +165,7 @@ public class Project
     public void loadTable(String uuid, String headers, String data) throws IOException
     {
         // Check if the datatables list has a table with the uuid
-        for (Datatable table : this.datatables)
+        for (Datatable table : this.datatables.values())
         {
             // If we have a match, import the headers
             if (table.getUUID().toString().equals(uuid))
@@ -188,6 +187,6 @@ public class Project
         if (!data.isEmpty())     table.importData(data);
 
         // And add the table
-        if (!this.datatables.contains(table)) this.datatables.add(table);
+        if (!this.datatables.containsKey(table.getName())) this.datatables.put(table.getName(), table);
     }
 }
